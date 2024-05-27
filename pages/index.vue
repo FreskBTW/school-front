@@ -1,102 +1,98 @@
 <template>
-  <v-container class="fill-height d-flex flex-column justify-center align-center">
-    <v-card class="pa-5" max-width="400" elevation="1">
-      <v-card-title class="headline text-center">
-        Welcome, create your school account
-      </v-card-title>
-      <v-card-subtitle class="text-center mb-4">
-        It is our great pleasure to have you on board!
-      </v-card-subtitle>
-      <v-form>
-        <v-text-field
-          v-model="adminName"
-          label="Enter the name of admin"
-          required
-          outlined
-          class="mb-4"
-        />
-        <v-text-field
-          v-model="schoolName"
-          label="Enter the name of school"
-          required
-          outlined
-          class="mb-4"
-        />
-        <v-text-field
-          v-model="schoolEmail"
-          label="Enter the school email"
-          required
-          outlined
-          type="email"
-          class="mb-4"
-        />
-        <v-btn color="primary" block large @click="submitForm">
-          Next
-        </v-btn>
-      </v-form>
-      <v-card-actions class="justify-center mt-4">
-        <v-btn text href="/login">
-          Already have an account? Sign up
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-container>
+  <div class="login-page">
+    <div class="login-container">
+      <h1>Welcome, Log into your account</h1>
+      <div class="login-form">
+        <p>It is our great pleasure to have you on board!</p>
+        <input v-model="schoolName" type="text" placeholder="Enter the name of school">
+        <input v-model="password" type="password" placeholder="Enter Password">
+        <button @click="login">
+          Login
+        </button>
+        <p>Already have an account? <a href="#">Sign up</a></p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
   data () {
     return {
-      adminName: '',
       schoolName: '',
-      schoolEmail: ''
+      password: ''
     }
   },
   methods: {
-    submitForm () {
-      // Implement your form submission logic here
-      console.log('Admin Name:', this.adminName)
+    login () {
+      // Conectar con back
       console.log('School Name:', this.schoolName)
-      console.log('School Email:', this.schoolEmail)
+      console.log('Password:', this.password)
     }
   }
 }
 </script>
 
 <style scoped>
-.fill-height {
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
   background-color: #f9f9f9;
-  padding: 0 16px;
 }
 
-.pa-5 {
-  padding: 20px !important;
+.login-container {
+  text-align: center;
 }
 
-.headline {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #DCDCDC;
+h1 {
+  font-weight: normal;
+  margin-bottom: 20px;
 }
 
-.mb-4 {
-  margin-bottom: 16px !important;
-}
-
-.v-card {
+.login-form {
+  background: white;
+  padding: 40px;
   border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.v-btn {
-  border-radius: 8px;
+.login-form p {
+  margin-bottom: 20px;
 }
 
-.v-card-subtitle {
-  color: #DCDCDC;
+input[type="text"],
+input[type="password"] {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.v-btn--block {
-  border-radius: 8px;
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 </style>
