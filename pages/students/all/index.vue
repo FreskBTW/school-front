@@ -1,8 +1,5 @@
 <template>
   <v-app>
-    <header class="header">
-      <br>Learn how to launch faster <br> watch our webinar from our experts and get a limited time offer.
-    </header>
     <v-navigation-drawer app permanent class="custom-drawer">
       <v-list active-color="2D88D4">
         <v-list-item class="logo-container">
@@ -18,7 +15,7 @@
         <v-divider class="border-opacity-100" color="white" />
         <br>
 
-        <v-list-item link class="menu-item">
+        <v-list-item link class="menu-item" @click="$router.push('/dashboard')">
           <v-list-item-icon>
             <v-icon class="white--text menu-icon">
               mdi-home-outline
@@ -262,90 +259,193 @@
     </v-navigation-drawer>
     <v-main>
       <v-container>
-        <v-row>
-          <v-col cols="12" class="text-right">
-            <v-btn class="icn-log-in" icon>
-              <v-icon>mdi-bell-badge-outline</v-icon>
-            </v-btn>
-            <v-btn color="#509CDB" class="btn-text-color" @click="$router.push('/')">
-              Log out
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
-            <h1 class="welcome-title">
-              Welcome to your dashboard, Udemy school
-            </h1>
-            <p class="welcome-subtitle">
-              Uyo/school/@teachable.com
-            </p>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
-            <v-card class="pa-3 action-card">
-              <v-card-title>
-                <div class="icon-background">
-                  <v-icon class="icon-content">
-                    mdi-account-plus
-                  </v-icon>
-                </div>
-                <span>Add other admins</span>
-              </v-card-title>
-              <v-card-text>
-                Create rich course content and coaching products for your students. When you give them a pricing plan, they'll appear on your site!
-              </v-card-text>
-              <v-card-title>
-                <div class="icon-background">
-                  <v-icon class="icon-content">
-                    mdi-bank
-                  </v-icon>
-                </div>
-                <span>Add classes</span>
-              </v-card-title>
-              <v-card-text>
-                Create rich course content and coaching products for your students. When you give them a pricing plan, they'll appear on your site!
-              </v-card-text>
-              <v-card-title>
-                <div class="icon-background">
-                  <v-icon class="icon-content">
-                    mdi-account-multiple-plus
-                  </v-icon>
-                </div>
-                <span>Add students</span>
-              </v-card-title>
-              <v-card-text>
-                Create rich course content and coaching products for your students. When you give them a pricing plan, they'll appear on your site!
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+        <v-data-table :headers="headers" :items="schoolstudents" elevation="0" class="v-data-table-class" />
       </v-container>
-      <v-btn
-        s
-        class="support-button"
-        color="#152259"
-        dark
-        @click="supportClicked"
-      >
-        <v-icon left>
-          mdi-headset
-        </v-icon>
-        Support
-        <v-icon right>
-          mdi-chevron-up
-        </v-icon>
+      <v-col cols="12" class="text-right">
+        <v-btn color="white" class="btn-text-color" @click="$router.push('/')">
+          Log out
+        </v-btn>
+        <v-btn
+          class="support-button"
+          color="#152259"
+          dark
+          @click="supportClicked"
+        >
+          <v-icon left>
+            mdi-headset
+          </v-icon>
+          Support
+          <v-icon right>
+            mdi-chevron-up
+          </v-icon>
+        </v-btn>
+      </v-col>
+      <v-btn color="#509CDB" class="btns-text-color" @click="showNuevo = true">
+        Add Student
       </v-btn>
+      <v-dialog v-model="showNuevo" class="v-dialog-style" height="auto" width="auto">
+        <v-card>
+          <v-card-title>Add Students</v-card-title>
+          <v-card-text>
+            <v-form ref="form" v-model="validForm">
+              <v-container>
+                <v-row>
+                  <v-col cols="12" md="4">
+                    <v-text-field v-model="nameStudent" label="Name" type="input" />
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-text-field
+                      v-model="classStudent"
+                      label="Class"
+                      type="input"
+                    />
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-select
+                      v-model="genderStudent"
+                      :items="genderOptions"
+                      label="Gender"
+                      type="input"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field v-model="emailStudent" label="Email address" type="email" :rules="correo" />
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field v-model="phoneStudent" label="Phone number" type="input" />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field v-model="studentPass" label="Password" type="password" :rules="password" />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-row>
+              <v-col cols="6">
+                <v-btn right block color="gray" @click="agregar">
+                  <span style="color:black; text-transform: none;">
+                    Add Student
+                  </span>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-main>
   </v-app>
 </template>
 <script>
 export default {
-  name: 'Dashboard',
+  data () {
+    return {
+      headers: [
+        {
+          text: 'Name',
+          align: 'center',
+          sortable: true,
+          value: 'studentname'
+        },
+        {
+          text: 'Student ID',
+          align: 'center',
+          sortable: true,
+          value: 'studentid'
+        },
+        {
+          text: 'Email adress',
+          align: 'center',
+          sortable: true,
+          value: 'studentemail'
+        },
+        {
+          text: 'Class',
+          align: 'center',
+          sortable: true,
+          value: 'studentclass'
+        },
+        {
+          text: 'Gender',
+          align: 'center',
+          sortable: false,
+          value: 'studentgender'
+        }
+      ],
+      schoolstudents: [],
+      password: [
+        v => (v && v.length > 8) || 'Password must be more than 8 chars'
+      ],
+      correo: [
+        v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+      ],
+      showNuevo: false,
+      genderOptions: ['Male', 'Female', 'Other']
+    }
+  },
+  mounted () {
+    this.token = localStorage.getItem('token')
+    if (!this.token) {
+      this.$router.push('/')
+    }
+    this.getAllStudents()
+  },
   methods: {
+    getAllStudents () {
+      const url = 'http://localhost:5010/api/auth/get-allstudents'
+      const config = {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      }
+      this.$axios.get(url, config)
+        .then((res) => {
+          console.log('@@@ res =>', res)
+          if (res.data.message === 'Success') {
+            this.schoolstudents = res.data.students
+          } else if (res.data.message === 'Invalid Token') {
+            this.router.push('/')
+          }
+        })
+        .catch((err) => {
+          console.log('@@@ err =>', err)
+        })
+    },
     logout () {
       console.log('Logging out...')
+    },
+    agregar () {
+      this.validform = this.$refs.form.validate()
+      if (this.validForm) {
+        const sendData = {
+          studentid: Date.now().toString(),
+          studentemail: this.emailStudent,
+          studentname: this.nameStudent,
+          studentpass: this.studentPass,
+          studentnum: this.phoneStudent,
+          studentclass: this.classStudent,
+          studentgender: this.genderStudent
+        }
+        const url = 'http://localhost:5010/api/auth/students/signup'
+        this.$axios.post(url, sendData)
+          .then((res) => {
+            console.log('@@@ res =>', res)
+            if (res.data.message === 'Estudiante registrado Satisfactoriamente') {
+              this.getAllUsers()
+              this.showNuevo = false
+            }
+          })
+          .catch((err) => {
+            console.log('@@@ err =>', err)
+          })
+      } else {
+        alert('Faltan Datos')
+      }
     }
   }
 }
@@ -355,6 +455,10 @@ export default {
 .v-application {
   font-family: "Kumbh Sans", sans-serif;
   flex-direction: column;
+}
+.v-dialog-style{
+  height: 300px !important;
+  width: 600px !important;
 }
 
 .custom-drawer {
@@ -396,7 +500,6 @@ export default {
   text-align: center;
   margin-bottom: 10px;
 }
-
 .welcome-subtitle {
   font-size: 24px;
   font-weight: 500;
@@ -409,7 +512,7 @@ export default {
   text-align: center;
   width: 800px;
   height: 460px;
-  margin-left: 150px;
+  margin-left: 360px;
 }
 
 .action-card .v-card-title {
@@ -428,11 +531,20 @@ export default {
 }
 
 .btn-text-color {
-  color: white;
+  color: black;
   position: fixed;
   top: 30px;
   text-transform: none;
   right: 30px;
+}
+.btns-text-color {
+  color: white;
+  top: 0px;
+  text-transform: none;
+  left: 100px;
+  font-size: 15px;
+  width: 140px !important;
+  height: 50px !important;
 }
 
 .menu-item {
@@ -525,6 +637,13 @@ export default {
 }
 .menu_style_items:hover {
   background-color: #2D88D4;
+}
+.v-data-table-class {
+margin-top: 100px;
+left: 300px;
+position: fixed;
+width: 1000px;
+height: auto;
 }
 .spacing-icn{
   margin-right: 20px;
